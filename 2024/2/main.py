@@ -4,64 +4,30 @@ def main():
 
     safeReportCount = 0
     fixedReports = []
-    strangeList = []
+    wrongReports = []
     with open("input.txt", "r") as inputFile:
         for line in inputFile:
             report = line.split()
-            i=-1
-            for level in report:
-                i+=1
-                level=getInt(level)
-                if(isEndOfReport(i+1, report)):
-                    safeReportCount += 1
-                    break
-                nextLevel=getInt(report[i+1])
+            if (isReportSafe(report)):
+                safeReportCount += 1
+            else :
+                wrongReports.append(report)
 
-                # Setup direction
-                if (i == 0):
-                    flowType=setupDirection(level, nextLevel)
-                    if (flowType == FlowType.EQUAL):
-                        report.pop(i)
-                        fixedReports.append(report)
-                        break
-
-                # Verify safety
-                if (isStepSafe(flowType, level, nextLevel) == False):
-                    if (i == 1):
-                        strangeList.append(report)
-                    report.pop(i+1)
-                    fixedReports.append(report)
-                    break
-
-        
-    print ("bons reports : ", safeReportCount)
-    print ("Report a revoir : ", len(fixedReports))
-    print(strangeList)
+    print("Bons reports : ", safeReportCount)
+    print("Reports a revoir : ", len(wrongReports))
+    print("~~")
 
     safeFixedReportsCount=0
 
-    for report in fixedReports:
-        i=-1
-        for level in report:
-            i+=1
-            level=getInt(level)
-            if(isEndOfReport(i+1, report)):
+    for report in wrongReports:
+        fixedReports = getFixedReports(report)
+        for fixedReport in fixedReports:
+            if(isReportSafe(fixedReport)):
                 safeFixedReportsCount += 1
-                break
-            nextLevel=getInt(report[i+1])
-
-            # Setup direction
-            if (i == 0):
-                flowType=setupDirection(level, nextLevel)
-                if (flowType == FlowType.EQUAL):
-                    break
-
-            # Verify safety
-            if (isStepSafe(flowType, level, nextLevel) == False):
                 break
 
     print ("Bons reports : ", safeReportCount)
-    print ("Bons reports fixés : ", safeFixedReportsCount)
+    print ("Bons reports fixes : ", safeFixedReportsCount)
     print ("Bons reports totaux : ", safeFixedReportsCount + safeReportCount)
 
     return 0
