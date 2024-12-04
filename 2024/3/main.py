@@ -1,9 +1,12 @@
 import re
 def getMultiplyList(line:str) -> list:
-    return re.findall("mul\([0-9]{1,3},[0-9]{1,3}\)",line)
+    return re.findall("mul\\([0-9]{1,3},[0-9]{1,3}\\)",line)
 
 def getMultiplyResult(list) -> int:
     return int(list[0]) * int(list[1])
+
+def getMultiplyFactors(line:str) -> list:
+    return re.findall("[0-9]{1,3}",line)
 
 def main():
 
@@ -13,13 +16,9 @@ def main():
     with open("input.txt", "r") as inputFile:
         for line in inputFile:
             multiplyList = getMultiplyList(line)
-
-    for elem in multiplyList:
-        numbersToMultiply = re.findall("[0-9]{1,3}",elem)
-        sumResult += getMultiplyResult(numbersToMultiply)
-        print (elem, getMultiplyResult(numbersToMultiply))
+            for elem in multiplyList:
+                sumResult += getMultiplyResult(getMultiplyFactors(elem))
     print (sumResult)
-
 
     return 0
 
