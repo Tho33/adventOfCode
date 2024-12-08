@@ -1,3 +1,45 @@
+xMasLists = [
+    [
+        ['M', '_', 'S'],
+        ['_', 'A', '_'],
+        ['M', '_', 'S']
+    ],[
+        ['M', '_', 'M'],
+        ['_', 'A', '_'],
+        ['S', '_', 'S']
+    ],[
+        ['S', '_', 'M'],
+        ['_', 'A', '_'],
+        ['S', '_', 'M']
+    ],[
+        ['S', '_', 'S'],
+        ['_', 'A', '_'],
+        ['M', '_', 'M']
+    ]
+]
+
+def hasMasPatternIn3x3Array(list3x3:list)->bool:
+    for comparativePattern in xMasLists:
+        if comparativePattern == list3x3:
+            return True
+
+def get3x3ArrayFromStartingPoint(startingPosition:list, doubleArray:list)->list:
+    startingX=startingPosition[0]
+    startingY=startingPosition[1]
+    result=[
+        [doubleArray[startingX-1][startingY-1], doubleArray[startingX-1][startingY], doubleArray[startingX-1][startingY+1]],
+        [doubleArray[startingX][startingY-1],   doubleArray[startingX][startingY],   doubleArray[startingX][startingY+1]],
+        [doubleArray[startingX+1][startingY-1], doubleArray[startingX+1][startingY], doubleArray[startingX+1][startingY+1]]
+    ]
+    return result
+
+def parse3x3Array(list3x3:list)->list:
+    list3x3[0][1] = '_'
+    list3x3[1][0] = '_'
+    list3x3[1][2] = '_'
+    list3x3[2][1] = '_'
+    return list3x3
+
 def getCoordDeltaForHorizontalRight() -> list:
     return [[0,0],[0,1],[0,2],[0,3]]
 
@@ -49,19 +91,14 @@ def getPossibleCombinationsMoves(arrayWidth:int, arrayHeight:int, startingPositi
         moves.append(getCoordDeltaForVerticalDown())
 
     if (((startingX - wordSize)>=0) & ((startingY + wordSize)<arrayHeight)):
-        print("downLeft")
         moves.append(getCoordDeltaForDiagonalDownLeft())
     if (((startingX + wordSize)<arrayWidth) & ((startingY + wordSize)<arrayHeight)):
-        print("downRight")
         moves.append(getCoordDeltaForDiagonalDownRight())
     if (((startingX - wordSize)>=0) & ((startingY - wordSize)>=0)):
-        print("UpLeft")
         moves.append(getCoordDeltaForDiagonalUpLeft())
     if (((startingX + wordSize)<arrayWidth) & ((startingY - wordSize)>=0)):
-        print("UpRight")
         moves.append(getCoordDeltaForDiagonalUpRight())
     
-
     return moves
 
 def containsWordWithPattern(doubleArray:list, startingPosition:list, getCoordDeltaToCheck:list):
@@ -77,7 +114,8 @@ def containsWordWithPattern(doubleArray:list, startingPosition:list, getCoordDel
 def main():
 
     inputArray=[]
-    count=0
+    xMasCount=0
+    masShapeXCount=0
 
     with open("input.txt", "r") as inputFile:
         for line in inputFile:
@@ -95,9 +133,24 @@ def main():
                 combinations = getPossibleCombinationsMoves(len(inputArray),len(inputArray[0]), startingPosition)
                 for direction in combinations:
                     if (containsWordWithPattern(inputArray, startingPosition, direction)):
-                        count+=1
+                        xMasCount+=1
 
-    print (count)
+    for lineCount, lineElem in enumerate(inputArray):
+        if ((lineCount == 0) | (lineCount == len(inputArray)-1)):
+            continue
+        for columnCount, columnElem in enumerate(lineElem):
+            if ((columnCount == 0) | (columnCount == len(inputArray[0])-1)):
+                continue
+            if (columnElem == 'A'):
+                startingPosition=[lineCount, columnCount]
+                print (startingPosition)
+                array3x3 = parse3x3Array(get3x3ArrayFromStartingPoint(startingPosition, inputArray))
+                if (hasMasPatternIn3x3Array(array3x3)):
+                    masShapeXCount+=1
+
+    print ("XMAS Count : ", xMasCount)    
+    print ("Mas ShapeX Count : ", masShapeXCount)            
+
     return 0
 
 if __name__ == '__main__':
