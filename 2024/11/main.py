@@ -1,17 +1,17 @@
-def processOneBlink(peebleList:list)->list:
-    newList = []
-    for peeble in peebleList:
-        if(int(peeble) == 0):
-            newList.append(1)
-        elif(len(str(peeble))%2 == 0):
-            halfStringLength = len(str(peeble))//2
-            firstPart=str(peeble)[:halfStringLength]
-            secondPart=str(peeble)[halfStringLength:]
-            newList.append(int(firstPart))
-            newList.append(int(secondPart))
-        else:
-            newList.append(int(peeble)*2024)
-    return newList
+from collections import defaultdict
+
+def getPebblesFromPebble(pebble:int)->list[str]:
+        
+        if(int(pebble) == 0):
+            return ["1"]
+        
+        if(len(str(int(pebble)))%2 == 0):
+            halfStringLength = len(str(pebble))//2
+            firstPart=str(pebble)[:halfStringLength]
+            secondPart=str(pebble)[halfStringLength:]
+            return [str(int(firstPart)), str(int(secondPart))]
+        
+        return [str(int(pebble)*2024)]
 
 def main():
 
@@ -22,15 +22,29 @@ def main():
         for line in inputFile:
             inputList = line.split()
 
-    nextList = inputList
+    initialDict = defaultdict(int)
+    for pebble in inputList:
+        initialDict[pebble]+=1
+
+    print (initialDict)
+    
     while (currentBlink != blinksToProcess):
         print ("Current blinking", currentBlink, "Out of ", blinksToProcess)
-        nextList = processOneBlink(nextList)
-        print ("ListSize :", len(nextList))
-        currentBlink+=1
+        newPebbleDict = defaultdict(int)
 
-    print ("Final List : ", nextList)
-    print ("Size : ", len(nextList))
+        for pebble, quantity in initialDict.items():
+            for newPebble in getPebblesFromPebble(pebble):
+                newPebbleDict[newPebble]+=quantity
+
+        currentBlink+=1
+        initialDict = newPebbleDict
+
+    result = 0
+    for pebble, quantity in initialDict.items():
+        result+= quantity
+
+    print ("Total of pebbles :", result)
+
     return 0
 
 if __name__ == '__main__':
